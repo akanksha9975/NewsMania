@@ -1,0 +1,289 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+       
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #333;
+            padding: 15px 20px;
+        }
+
+        .navbar .logo {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin: 0 15px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #f4b400;
+        }
+
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            padding: 5px;
+            font-size: 14px;
+            width: 150px;
+        }
+
+        .search-box button {
+            background-color: #f4b400;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 3px;
+        }
+
+        .search-box button:hover {
+            background-color: #e09e00;
+        }
+
+       
+        .news-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .news-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .news-card .content {
+            padding: 15px;
+        }
+
+        .news-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .news-card p {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .news-card .read-more {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 15px;
+            background: #f4b400;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .news-card .read-more:hover {
+            background: #e09e00;
+        }
+
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .pagination button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            background-color: #f4b400;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .pagination button:hover {
+            background-color: #e09e00;
+        }
+
+        .pagination .page-number {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .pagination .active {
+            background-color: #f4b400;
+            color: white;
+            font-weight: bold;
+        }
+
+        .news-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .news-card {
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        }
+        .news-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .content {
+            padding: 15px;
+        }
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+    
+    </style>
+</head>
+<body>
+<nav class="navbar">
+        <div class="logo">NewsMania</div>
+        <ul class="nav-links">
+            <li><a href="#" onclick="fetchNews('home',1)">Home</a></li>
+            <li><a href="#" onclick="fetchNews('weather',1)">Weather</a></li>
+            <li><a href="#" onclick="fetchNews('sports',1)">Sports</a></li>
+            <li><a href="#" onclick="fetchNews('wildlife',1)">Wildlife</a></li>
+            <li><a href="#" onclick="fetchNews('politics',1)">Politics</a></li>
+            <li><a href="#" onclick="fetchNews('business',1)">Business</a></li>
+        </ul>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search news...">
+            <button onclick="searchNews()">Search</button>
+        </div>
+    </nav>
+
+    <div class="news-container" id="news-container">
+       
+    </div>
+
+    <div class="pagination">
+        <button onclick="prevPage()">Previous</button>
+        <button onclick="nextPage()">Next</button>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let query = "sports"; 
+        const apiKey = "dd3f812226514172a1f4fef6e5eb4496"; 
+
+        async function fetchNews(query, page) {
+            currentPage = page;
+            document.getElementById("news-container").innerHTML = "<h3>Loading...</h3>";
+
+            try {
+                let response = await fetch(`https://newsapi.org/v2/everything?q=${query}&page=${page}&pageSize=6&apiKey=${apiKey}`);
+                let data = await response.json();
+
+                if (data.articles.length === 0) {
+                    document.getElementById("news-container").innerHTML = "<h3>No news found</h3>";
+                    return;
+                }
+
+                document.getElementById("news-container").innerHTML = "";
+                data.articles.forEach(article => {
+                    let card = document.createElement("div");
+                    card.classList.add("news-card");
+
+                    card.innerHTML = `
+                        <img src="${article.urlToImage || 'https://via.placeholder.com/300'}" alt="News Image">
+                        <div class="content">
+                            <h3>${article.title}</h3>
+                            
+                            <p>${article.description || "Click below for more details."}</p>
+                            <a href="${article.url}" target="_blank" class="read-more">Read More</a>
+                        </div>
+                    `;
+
+                    document.getElementById("news-container").appendChild(card);
+                });
+            } catch (error) {
+                console.error("Error fetching news:", error);
+                document.getElementById("news-container").innerHTML = "<h3>Failed to load news. Try again later.</h3>";
+            }
+        }
+
+        function searchNews() {
+            let searchQuery = document.getElementById('searchInput').value.trim();
+            if (searchQuery) {
+                query = searchQuery;
+                fetchNews(query, 1);
+            } else {
+                alert("Please enter a search term.");
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                fetchNews(query, currentPage - 1);
+            }
+        }
+
+        function nextPage() {
+            fetchNews(query, currentPage + 1);
+        }
+
+       
+        fetchNews(query, 1);
+    </script>
+
+</body>
+</html>
