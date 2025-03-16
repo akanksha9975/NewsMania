@@ -1,4 +1,4 @@
-#  NewsMani
+#  NewsMania
 
 NewsMania is a dynamic web application that provides real-time news updates fetched from the News API. Users can browse news articles by category, search for specific topics, and navigate through paginated results.
 
