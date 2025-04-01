@@ -16,3 +16,4 @@ NewsMania is a dynamic web application that provides real-time news updates fetc
 - Framework:Express js
 
 
+![Image](https://github.com/user-attachments/assets/59bf3f1e-b65e-4abc-8217-c706ad9e11f6)
